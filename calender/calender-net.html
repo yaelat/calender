@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script>
+      
+     let gd="",ge="",id=0;
+    update=()=>{      
+        console.log(id);
+        axios.put('https://localhost:7084/api/Events/'+id,{"title": ge,
+        "start": gd,}).then(res=>{console.log("yes")})
+        document.getElementById('ddu').style.display="none";
+        document.getElementById('evu').style.display="none";
+        document.getElementById('sendu').style.display="none";
+        document.getElementById('update').style.display = "none";
+    }
+
+        function alist(e){
+        console.log(e);       
+        
+        let hl=document.getElementById('browsers'),opt;
+        hl.textContent = '';            
+        axios.get("https://localhost:7084/api/Events").then((res)=>{  
+            for(let i=0;i<res.data.length;i++)
+            {
+                opt=document.createElement('option');
+                opt.value=res.data[i].id+" "+res.data[i].title+"    "+res.data[i].start;
+                opt.id=res.data.id;
+                hl.appendChild(opt);
+            };
+        });    
+        if(e.target.value=='delete')
+        {
+            let del=document.getElementById('del');
+            del.style.display = "block";
+        }
+        else{
+            let up=document.getElementById('update');
+            up.style.display = "block";
+        }
+            
+        
+        
+
+    }
+
+    function openNow(){
+        id=event.target.value.substr(0,event.target.value.indexOf(" "));
+        document.getElementById('ddu').style.display="block";
+        document.getElementById('evu').style.display="block";
+        document.getElementById('sendu').style.display="block";
+    }
+
+         Addition=()=>{
+            
+      let dd = document.getElementById('dd'),
+      ev = document.getElementById('ev'),
+      send= document.getElementById('send');
+       
+      console.log(ev);
+      ev.style.display = "block";
+      dd.style.display = "block";
+      send.style.display = "block";
+    }
+    insertDD=()=>{gd= event.target.value;};
+    
+    function dela(){
+        id=event.target.value.substr(0,event.target.value.indexOf(" "));
+        document.getElementById('del').style.display = "none";
+        axios.delete('https://localhost:7084/api/Events/'+id).then((res)=>{ 
+            console.log(res.data) ;
+        })
+
+        console.log();
+      
+    }
+
+
+    insertEvent=()=>{ge= event.target.value;}
+
+    insertNow=()=>{
+      axios.post('https://localhost:7084/api/Events',{"title": ge,
+  "start": gd,}).then(res=>{console.log("yes")})
+   ev.style.display = "none";
+      dd.style.display = "none";
+      send.style.display = "none";
+    }
+
+        
+      document.addEventListener('DOMContentLoaded', function() {
+        axios.get("https://localhost:7084/api/Events").then((res)=>{
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          events:res.data,
+        });
+        calendar.render();
+      });
+    });
+   
+    
+
+    
+
+    </script>
+  </head>
+  <body>
+    <div style="width: 100%; display: flex; justify-content: space-around;" id="main">
+        <div>
+            <input value="addition" type="button" id="addition" onclick="Addition()"/>
+            <input  type="date" style="width: 50px; display: none;" id="dd"onchange="insertDD()"/>
+            <input value="event" type="text" style="width: 50px; display: none;" id="ev" onchange="insertEvent()"/>
+            <input value="yes" type="button" id="send" style="width: 50px; display: none;" onclick="insertNow()"/>
+        </div>
+        <div>
+            <form>
+                <input type="button" value="update" onclick="alist(event)">
+                <input list="browsers" name="browser" style="width: 50px; display: none;" id="update" onchange="openNow()"/>
+                <datalist id="browsers" class="tip"></datalist>                      
+            </form>
+            <input  type="date" style="width: 50px; display: none;" id="ddu"onchange="insertDD()"/>
+            <input value="event" type="text" style="width: 50px; display: none;" id="evu" onchange="insertEvent()"/>
+            <input value="yes" type="button" id="sendu" style="width: 50px; display: none;" onclick="update()"/>
+        </div>
+        <div>
+            <form>
+                <input type="button" value="delete" onclick="alist(event)" >
+                <input list="browsers" name="browser" style="width: 50px; display: none;" id="del" onchange="dela()"/>                           
+            </form>            
+        </div>
+    </div>
+    
+    <div id='calendar'></div>
+  </body>
+</html>

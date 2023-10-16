@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      //  axios.delete('https://eventsapi.onrender.com/api/Events/14').then(res=>{console.log("yes")})
+      let gd="",ge="";
+     document.addEventListener('DOMContentLoaded', function() {
+        axios.get("https://eventsapi.onrender.com/api/Events").then((rec)=>{
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+         initialView: 'dayGridMonth'
+        });
+        calendar.render();
+       });
+});
+    Addition=()=>{
+      let dd = document.getElementById('dd'),
+      ev = document.getElementById('ev'),
+      send= document.getElementById('send');
+
+      console.log(ev);
+      ev.style.display = "block";
+      dd.style.display = "block";
+      send.style.display = "block";
+    }
+    insertDD=()=>{gd= event.target.value;};
+    
+    del=()=>{
+      
+      axios.get('https://eventsapi.onrender.com/api/Events').then(rec=>{
+        let div = document.getElementById('list');
+        console.log(div);
+        //for (i = 0; i < rec.data.length; i++)
+        div.innerHTML+'eee';
+      })
+    }
+
+
+    insertEvent=()=>{ge= event.target.value;}
+
+    update=()=>{
+      axios.post('https://eventsapi.onrender.com/api/Events',{"title": ge,
+  "start": gd,}).then(res=>{console.log("yes")})
+   ev.style.display = "none";
+      dd.style.display = "none";
+      send.style.display = "none";
+    }
+
+    </script>
+  </head>
+  <body>
+    <div style="width: 100%; display: flex; justify-content: space-around;" id="main">
+    <div><h2>addition</h2><input value="addition" type="button" id="addition" onclick="Addition()"/>
+    <input  type="date" style="width: 50px; display: none;" id="dd"onchange="insertDD()"/>
+    <input value="event" type="text" style="width: 50px; display: none;" id="ev" onchange="insertEvent()"/>
+    <input value="yes" type="button" id="send" style="width: 50px; display: none;" onclick="update()"/>
+    </div>
+    <div><h2>delete</h2><input value="delete" type="button" onclick="del()" id="dele"/>
+    <div id="list"></div>
+    </div>
+    <div><h2>update</h2>
+    
+    </div>
+    </div>
+
+
+    <input value="addition" type="button" id="addition" onclick="Addition()"/>
+    
+    <input value="add" type="button"/>
+    <br/>
+    
+    
+    <div id='calendar'></div>
+  </body>
+</html>
